@@ -436,12 +436,7 @@ textarea:focus, input:focus, select:focus {
   <h1 class="page-title">Carousel Studio</h1>
   <p class="page-sub">Generate Instagram carousels in Ferncrest brand style — 1080×1350 (4:5) — Karrik font — direct PNG download</p>
 
-  <!-- API KEY -->
-  <div class="api-section">
-    <label class="field-label">Anthropic API Key (required for transcript mode)</label>
-    <input type="text" id="api-key" placeholder="sk-ant-..." style="font-family:monospace;font-size:12px;">
-    <div class="api-note">Your key is never stored or sent anywhere except directly to Anthropic. Get one at <a class="api-link" href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></div>
-  </div>
+
 
   <!-- MODE TABS -->
   <div class="mode-tabs">
@@ -822,9 +817,7 @@ async function renderFromTemplate() {
 }
 
 async function generateFromTranscript() {
-  const apiKey = document.getElementById('api-key').value.trim();
   const transcript = document.getElementById('transcript').value.trim();
-  if (!apiKey) { showError('Please enter your Anthropic API key above.'); return; }
   if (!transcript) { showError('Please paste your transcript first.'); return; }
 
   document.getElementById('ai-gen-btn').disabled = true;
@@ -854,9 +847,9 @@ Return ONLY raw JSON starting with { — no markdown, no backticks, no explanati
 
   try {
     showProgress(20, 'Claude is analyzing your content...');
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/api/generate', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system: sysPrompt, messages: [{ role: 'user', content: userMsg }] })
     });
     showProgress(60, 'Parsing response...');
