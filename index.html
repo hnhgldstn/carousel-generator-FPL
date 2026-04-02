@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ferncrest Carousel Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Karrik&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #0a0a0a;
+  --white: #ffffff;
+  --green: #2d5a2d;
+  --green-light: #3d7a3d;
+  --cream: #f5f2ec;
+  --gray: #8a8a8a;
+  --border: #e0dbd2;
+  --karrik: 'Karrik', serif;
+  --sans: 'DM Sans', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background: var(--cream);
+  color: var(--black);
+  min-height: 100vh;
+}
+
+/* TOP NAV */
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  height: 60px;
+  background: var(--black);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.nav-logo {
+  font-family: var(--karrik);
+  font-size: 18px;
+  color: var(--white);
+  letter-spacing: 0.02em;
+}
+.nav-logo span { color: var(--green-light); }
+.nav-badge {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.6);
+}
+
+/* LAYOUT */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 48px 32px;
+}
+
+.page-title {
+  font-family: var(--karrik);
+  font-size: 36px;
+  font-weight: 400;
+  margin-bottom: 6px;
+  letter-spacing: -0.5px;
+}
+.page-sub {
+  font-size: 14px;
+  color: var(--gray);
+  margin-bottom: 40px;
+}
+
+/* MODE TABS */
+.mode-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 32px;
+  border: 1.5px solid var(--black);
+  border-radius: 8px;
+  overflow: hidden;
+  width: fit-content;
+}
+.mode-tab {
+  padding: 10px 28px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--sans);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--gray);
+  transition: all 0.15s;
+}
+.mode-tab.active {
+  background: var(--black);
+  color: var(--white);
+}
+.mode-tab:not(.active):hover { background: var(--border); color: var(--black); }
+
+/* PANELS */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* GRID LAYOUT */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.full { grid-column: 1 / -1; }
+
+/* CARDS */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 22px;
+}
+
+.field-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--gray);
+  margin-bottom: 8px;
+  display: block;
+}
+
+textarea, input[type=text], select {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-family: var(--sans);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--cream);
+  color: var(--black);
+  resize: vertical;
+  line-height: 1.55;
+  transition: border-color 0.15s;
+}
+textarea:focus, input:focus, select:focus {
+  outline: none;
+  border-color: var(--black);
+}
+
+/* UPLOAD ZONE */
+.upload-zone {
+  border: 1.5px dashed var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  background: var(--cream);
+  transition: border-color 0.15s, background 0.15s;
+}
+.upload-zone:hover { border-color: var(--black); background: #ede9e1; }
+.upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.uz-main { font-size: 14px; color: var(--black); font-weight: 500; }
+.uz-sub { font-size: 12px; color: var(--gray); margin-top: 3px; }
+.uz-ok { font-size: 12px; color: var(--green); font-weight: 500; margin-top: 6px; }
+
+/* PHOTO THUMBNAILS */
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+  gap: 6px;
+  margin-top: 12px;
+}
+.photo-thumb {
+  aspect-ratio: 4/5;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--border);
+}
+.photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-thumb .pt-num {
+  position: absolute; bottom: 3px; left: 3px;
+  font-size: 9px; font-weight: 500; color: #fff;
+  background: rgba(0,0,0,0.65); padding: 1px 4px; border-radius: 3px;
+}
+.photo-thumb .pt-del {
+  position: absolute; top: 3px; right: 3px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: rgba(0,0,0,0.7); color: #fff;
+  border: none; cursor: pointer; font-size: 9px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* TEMPLATE PICKER */
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+.template-card {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  background: var(--white);
+}
+.template-card:hover { border-color: var(--black); }
+.template-card.selected { border-color: var(--green); background: #f0f7f0; }
+.tc-icon { font-size: 20px; margin-bottom: 8px; }
+.tc-name { font-size: 13px; font-weight: 500; color: var(--black); }
+.tc-desc { font-size: 11px; color: var(--gray); margin-top: 2px; }
+
+/* PATTERN SELECTOR */
+.pattern-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.pat-btn {
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  background: var(--white);
+  text-align: left;
+  transition: border-color 0.15s;
+}
+.pat-btn:hover { border-color: var(--gray); }
+.pat-btn.selected { border-color: var(--black); background: var(--cream); }
+.pat-name { font-size: 12px; font-weight: 500; color: var(--black); }
+.pat-desc { font-size: 11px; color: var(--gray); margin-top: 1px; }
+
+/* API KEY INPUT */
+.api-section {
+  background: #fff8f0;
+  border: 1px solid #f0d9b5;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+.api-section .field-label { color: #b37400; }
+.api-note { font-size: 11px; color: #b37400; margin-top: 5px; }
+.api-link { color: #b37400; }
+
+/* BUTTONS */
+.btn-primary {
+  background: var(--black);
+  color: var(--white);
+  border: none;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.btn-primary:hover { opacity: 0.85; }
+.btn-primary:active { transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-green {
+  background: var(--green);
+  color: var(--white);
+  border: none;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-green:hover { opacity: 0.88; }
+.btn-green:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-outline {
+  background: transparent;
+  color: var(--black);
+  border: 1.5px solid var(--black);
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-outline:hover { background: var(--border); }
+
+/* ACTIONS ROW */
+.actions { display: flex; gap: 10px; align-items: center; margin-top: 24px; flex-wrap: wrap; }
+
+/* PROGRESS */
+.prog-wrap { margin: 16px 0; }
+.prog-track { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.prog-fill { height: 100%; background: var(--green); border-radius: 2px; transition: width 0.4s ease; width: 0%; }
+.prog-label { font-size: 12px; color: var(--gray); margin-top: 6px; }
+
+/* ERROR */
+.error-box {
+  background: #fff0f0;
+  border: 1px solid #ffcccca0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #c00;
+  margin-top: 12px;
+}
+
+/* SLIDES OUTPUT */
+.output-section { margin-top: 36px; }
+.output-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.output-title { font-family: var(--karrik); font-size: 22px; font-weight: 400; }
+.output-meta { font-size: 12px; color: var(--gray); margin-top: 2px; }
+
+.slides-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.slide-tile {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--white);
+  transition: border-color 0.15s;
+}
+.slide-tile:hover { border-color: var(--black); }
+.slide-preview {
+  aspect-ratio: 4/5;
+  background: #111;
+  position: relative;
+  overflow: hidden;
+}
+.slide-preview canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; display: block;
+}
+.slide-footer {
+  padding: 7px 10px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.slide-num { font-size: 11px; font-weight: 500; color: var(--gray); }
+.btn-dl-single {
+  font-size: 10px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--gray);
+  padding: 2px 7px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: var(--sans);
+}
+.btn-dl-single:hover { background: var(--cream); color: var(--black); }
+
+.export-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  flex-wrap: wrap;
+}
+.export-bar span { font-size: 13px; color: var(--gray); flex: 1; }
+
+/* DIVIDER */
+.divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+
+/* HIDDEN */
+.hidden { display: none !important; }
+
+/* STYLE LEGEND */
+.style-legend {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--gray);
+}
+.legend-swatch {
+  width: 32px;
+  height: 20px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+  .two-col { grid-template-columns: 1fr; }
+  .pattern-grid { grid-template-columns: 1fr 1fr; }
+  nav { padding: 0 20px; }
+  .container { padding: 28px 16px; }
+  .page-title { font-size: 26px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Fern<span>crest</span> Carousel Studio</div>
+  <div class="nav-badge">Team Tool — v1.0</div>
+</nav>
+
+<div class="container">
+  <h1 class="page-title">Carousel Studio</h1>
+  <p class="page-sub">Generate Instagram carousels in Ferncrest brand style — 1080×1350 (4:5) — Karrik font — direct PNG download</p>
+
+  <!-- API KEY -->
+  <div class="api-section">
+    <label class="field-label">Anthropic API Key (required for transcript mode)</label>
+    <input type="text" id="api-key" placeholder="sk-ant-..." style="font-family:monospace;font-size:12px;">
+    <div class="api-note">Your key is never stored or sent anywhere except directly to Anthropic. Get one at <a class="api-link" href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></div>
+  </div>
+
+  <!-- MODE TABS -->
+  <div class="mode-tabs">
+    <button class="mode-tab active" onclick="switchMode('templates')">Templates</button>
+    <button class="mode-tab" onclick="switchMode('transcript')">Transcript → AI</button>
+  </div>
+
+  <!-- TEMPLATES PANEL -->
+  <div id="panel-templates" class="panel active">
+    <div class="card full" style="margin-bottom:20px;">
+      <label class="field-label">Choose a template</label>
+      <div class="template-grid" id="template-grid"></div>
+    </div>
+
+    <div id="template-slides-editor" class="hidden">
+      <div class="card full" style="margin-bottom:20px;">
+        <label class="field-label">Edit slide copy</label>
+        <p style="font-size:12px;color:var(--gray);margin-bottom:14px;">Click any field to edit. H1 = black box. H2 = green box. CTA = white box (last slide only).</p>
+        <div id="slides-editor"></div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <label class="field-label">Photos — one per slide (up to 12)</label>
+        <div class="upload-zone">
+          <input type="file" accept="image/*" multiple onchange="loadPhotos(event,'t')">
+          <div class="uz-main">Drop property photos here</div>
+          <div class="uz-sub">Select multiple — assigned to slides in order</div>
+          <div class="uz-ok hidden" id="t-photo-ok"></div>
+        </div>
+        <div class="photo-grid" id="t-pgrid"></div>
+      </div>
+      <div class="card">
+        <label class="field-label">Brand style</label>
+        <div class="style-legend">
+          <div class="legend-item">
+            <div class="legend-swatch" style="background:#000;color:#fff;">H1</div>
+            Black fill — white text
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch" style="background:#2d5a2d;color:#fff;">H2</div>
+            Green fill — white text
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch" style="background:#fff;color:#000;border:1px solid #ddd;font-size:7px;">CTA</div>
+            White fill — black text
+          </div>
+        </div>
+        <p style="font-size:12px;color:var(--gray);">All slides render at 1080×1350px (4:5 Instagram). Boxes hug text width. Karrik font throughout.</p>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-primary" onclick="renderFromTemplate()">Render 12 slides</button>
+      <button class="btn-outline hidden" id="t-dl-all" onclick="dlAll('t')">Download all 12 PNGs ↓</button>
+    </div>
+  </div>
+
+  <!-- TRANSCRIPT PANEL -->
+  <div id="panel-transcript" class="panel">
+    <div class="two-col">
+      <div class="card full">
+        <label class="field-label">Story pattern</label>
+        <div class="pattern-grid" id="pattern-grid"></div>
+      </div>
+      <div class="card full">
+        <label class="field-label">Transcript or script</label>
+        <textarea id="transcript" rows="7" placeholder="Paste your full reel transcript here — Claude will break it into 12 slides in your chosen pattern..."></textarea>
+      </div>
+      <div class="card">
+        <label class="field-label">Key stats & data</label>
+        <textarea id="stats" rows="3" placeholder="$725K listing, 10 acres, 7-8 units, 20-30 unit target..."></textarea>
+      </div>
+      <div class="card">
+        <label class="field-label">Brand voice notes</label>
+        <textarea id="voice" rows="3" placeholder="Bold, operator-focused, no fluff. Contrarian. Direct."></textarea>
+      </div>
+      <div class="card full">
+        <label class="field-label">Photos — one per slide (up to 12)</label>
+        <div class="upload-zone">
+          <input type="file" accept="image/*" multiple onchange="loadPhotos(event,'ai')">
+          <div class="uz-main">Drop property photos here</div>
+          <div class="uz-sub">Select multiple — assigned to slides in order</div>
+          <div class="uz-ok hidden" id="ai-photo-ok"></div>
+        </div>
+        <div class="photo-grid" id="ai-pgrid"></div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-green" id="ai-gen-btn" onclick="generateFromTranscript()">Generate 12 slides with AI</button>
+      <button class="btn-outline hidden" id="ai-dl-all" onclick="dlAll('ai')">Download all 12 PNGs ↓</button>
+    </div>
+    <div class="error-box hidden" id="ai-error"></div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="prog-wrap hidden" id="prog-wrap">
+    <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+    <div class="prog-label" id="prog-label">Starting...</div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="output-section hidden" id="output-section">
+    <div class="output-header">
+      <div>
+        <div class="output-title">12 slides ready</div>
+        <div class="output-meta" id="output-meta">1080×1350 — 4:5 Instagram — Karrik font</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-outline" id="out-dl-all" onclick="dlAll('current')">Download all 12 PNGs</button>
+      </div>
+    </div>
+    <div class="slides-grid" id="slides-grid"></div>
+    <div class="export-bar">
+      <span>All 12 slides at 1080×1350 — Ferncrest brand system — ready to post</span>
+      <button class="btn-primary" onclick="dlAll('current')">Download all 12 ↓</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── CONSTANTS ───────────────────────────────────────────────
+const W=1080, H=1350;
+const GREEN='#2d5a2d';
+const LEFT=60, PX=32, PY=26, GAP=14, MAX_W=W-LEFT*2;
+
+const BG_GRAD=[
+  ['#0d1f0f','#1a3a14'],['#0f0d1f','#1a1535'],['#1a1f0d','#2a3514'],
+  ['#0d1a1f','#0f2535'],['#1f1a0d','#352a10'],['#0d0f1a','#141828'],
+  ['#1a0d1f','#2a1535'],['#0f1a0d','#182814'],['#1f0d1a','#351428'],
+  ['#0d1f1a','#143528'],['#1a0f0d','#2a1810'],['#0f1f0d','#182e14']
+];
+
+// ─── STATE ───────────────────────────────────────────────────
+let tPhotos=[], aiPhotos=[], currentCanvases=[], currentSlides=[];
+let selectedTemplate=null, selectedPattern='B';
+
+// ─── TEMPLATES ───────────────────────────────────────────────
+const TEMPLATES = {
+  property: {
+    name: 'Property Walkthrough',
+    icon: '🏕',
+    desc: 'Site visit + honest math',
+    slides: [
+      {h1:'[PROPERTY] IS LISTED FOR $[PRICE]', h2:'I drove out to [LOCATION] to walk this site. Here\'s everything I found.', cta:null},
+      {h1:'THE OWNER DID EVERYTHING RIGHT AND STILL HAD TO EXIT', h2:'[CONTEXT ABOUT OPERATOR]. Took on debt. Never hit the scale needed.', cta:null},
+      {h1:'IN GLAMPING, SCALE IS EVERYTHING', h2:'The Ferncrest model starts at 12 units and scales to 20–30. Below that you can\'t afford a manager. You\'re owner-operating forever.', cta:null},
+      {h1:'FIRST IMPRESSION — [OBSERVATION]', h2:'[WHAT YOU SAW ARRIVING]. Not a deal breaker yet — but it tells you something.', cta:null},
+      {h1:'THE ROAD IN IS [CONDITION]', h2:'[DESCRIBE ACCESS ISSUE]. [HOW TO FIX IT] — but that\'s another cost on top of the ask.', cta:null},
+      {h1:'[X] ACRES. BUT ONLY [Y] ARE ACTUALLY USABLE.', h2:'[DESCRIBE TOPOGRAPHY]. Beautiful land you simply can\'t build on.', cta:null},
+      {h1:'THE HONEST UNIT COUNT — MAX [N] SITES', h2:'Current hookups support [X] sites. Push creatively, reach [Y]. The sweet spot is 20–30. The math doesn\'t work yet.', cta:null},
+      {h1:'BUT THERE IS [WILDCARD OPPORTUNITY]', h2:'[DESCRIBE THE OPPORTUNITY]. If that plays out, this deal changes completely. Big if. But it\'s there.', cta:null},
+      {h1:'WHY IS IT GOING ON THE MARKET?', h2:'Not because glamping is broken. It\'s a capital structure problem — too much debt, too few units, no path to the scale that makes the math work.', cta:null},
+      {h1:'THIS IS THE FERNCREST FRANCHISE MODEL IN ACTION', h2:'I\'m not buying this. I\'m finding it for a franchise partner — negotiating the deal, then transferring it to a Ferncrest operator who\'s ready to build.', cta:null},
+      {h1:'NEXT UP — [NEXT PROPERTY/STEP]', h2:'[TEASE WHAT\'S COMING]. Same question: can the math work at 20–30 units? Stay tuned.', cta:null},
+      {h1:'[LOCATION A] OR [LOCATION B] — WHICH BECOMES A FERNCREST?', h2:'Drop your vote in the comments. Follow along as we evaluate, negotiate, and decide.', cta:'FOLLOW TO SEE WHAT WE DECIDE →'}
+    ]
+  },
+  franchise: {
+    name: 'Franchise Opportunity',
+    icon: '🤝',
+    desc: 'Partner recruitment story',
+    slides: [
+      {h1:'WE FOUND A GLAMPING SITE THAT\'S PERFECT FOR A FERNCREST', h2:'It\'s listed, it has infrastructure, and it\'s in a high-demand market. Here\'s why this is the opportunity.', cta:null},
+      {h1:'THE PROPERTY — [LOCATION] — [ACREAGE] ACRES', h2:'[DESCRIBE PROPERTY]. Existing units, hookups, and infrastructure already in place.', cta:null},
+      {h1:'WHY THIS MARKET IS STRONG', h2:'[MARKET STATS]. The Smoky Mountains are the most-visited national park in America. Demand isn\'t the problem.', cta:null},
+      {h1:'THE CONVERSION OPPORTUNITY', h2:'We don\'t build from scratch. We convert existing sites into Ferncrest glampgrounds. Faster, cheaper, less risk.', cta:null},
+      {h1:'THE FERNCREST MODEL — 20 TO 30 UNITS', h2:'At scale, you can hire a manager. You can step back. The property works for you — not the other way around.', cta:null},
+      {h1:'WHAT THE FRANCHISE GETS YOU', h2:'Our brand, our systems, our marketing playbook, and our direct involvement in the build. You\'re not doing this alone.', cta:null},
+      {h1:'THE NUMBERS — WHAT TO EXPECT', h2:'[REVENUE RANGE] annually at [X] units. [ADR] average daily rate. [OCCUPANCY]% occupancy in season.', cta:null},
+      {h1:'HOW WE FIND THESE DEALS', h2:'We walk properties, evaluate the math, and get them under contract. Then we hand the contract to a franchisee who\'s ready to build.', cta:null},
+      {h1:'WHAT MAKES A GOOD FRANCHISE PARTNER', h2:'Operators who want to own an asset. People who understand hospitality. Investors who think long-term. Sound like you?', cta:null},
+      {h1:'THE PROCESS — FROM INTEREST TO OPEN', h2:'Discovery call → site visit → franchise agreement → build → open. We\'re with you every step of the way.', cta:null},
+      {h1:'THIS SITE WON\'T WAIT', h2:'Good conversion opportunities move fast. If you\'ve been thinking about glamping investing, this is the moment to act.', cta:null},
+      {h1:'READY TO OWN A FERNCREST?', h2:'Drop a comment or DM us directly. Let\'s talk about whether this opportunity is the right fit for you.', cta:'DM US TO LEARN MORE →'}
+    ]
+  },
+  season: {
+    name: 'Season Update',
+    icon: '📈',
+    desc: 'Revenue + occupancy results',
+    slides: [
+      {h1:'OUR [SEASON] RESULTS ARE IN', h2:'Here\'s everything — occupancy, ADR, what worked, what didn\'t. Full transparency.', cta:null},
+      {h1:'WE OPENED WITH [N] UNITS IN [MONTH YEAR]', h2:'[DESCRIBE THE OPENING]. Nothing was perfect. But people loved it.', cta:null},
+      {h1:'SEASON [N] OCCUPANCY — [X]%', h2:'[DESCRIBE OCCUPANCY PATTERN]. Weekends booked out [X] weeks in advance. Weekdays are where we have room to grow.', cta:null},
+      {h1:'AVERAGE DAILY RATE — $[ADR]', h2:'We started at $[LOWER] and raised rates as reviews built. The market supported it. We left money on the table early.', cta:null},
+      {h1:'TOTAL REVENUE — $[AMOUNT]', h2:'[CONTEXT ABOUT REVENUE]. This is gross. Net is another conversation. But the direction is right.', cta:null},
+      {h1:'WHAT DROVE BOOKINGS', h2:'[TOP 3 BOOKING SOURCES]. Instagram was [X]% of direct bookings. Word of mouth is underrated.', cta:null},
+      {h1:'WHAT WE GOT WRONG', h2:'[HONEST MISTAKE 1]. [HONEST MISTAKE 2]. Every lesson cost us money. Now we know.', cta:null},
+      {h1:'WHAT WE GOT RIGHT', h2:'[WIN 1]. [WIN 2]. The [SPECIFIC FEATURE] was our biggest differentiator. Guests mentioned it in [X]% of reviews.', cta:null},
+      {h1:'BEST REVIEW WE GOT', h2:'"[QUOTE FROM REVIEW]" — that\'s why we do this.', cta:null},
+      {h1:'NEXT SEASON — WHAT WE\'RE ADDING', h2:'[PLANNED ADDITIONS]. This will push us from [N] to [N+X] units and change the economics significantly.', cta:null},
+      {h1:'THE INVESTMENT THESIS IS HOLDING', h2:'Year [N]. Revenue up [X]%. Units up [X]. The model works when you hit scale. We\'re getting there.', cta:null},
+      {h1:'FOLLOW ALONG AS WE BUILD SEASON [N+1]', h2:'We share everything — the wins, the losses, the numbers. If you\'re building in outdoor hospitality, this is for you.', cta:'FOLLOW FOR FULL TRANSPARENCY →'}
+    ]
+  },
+  predictions: {
+    name: 'Industry Predictions',
+    icon: '🔮',
+    desc: 'Authority + thought leadership',
+    slides: [
+      {h1:'OUTDOOR HOSPITALITY IS ABOUT TO CHANGE FASTER THAN ANYONE REALIZES', h2:'Here are my [N] predictions for [YEAR]. These aren\'t trends. They\'re signals.', cta:null},
+      {h1:'1. GLAMPING WILL SHIFT FROM NOVELTY TO NECESSITY', h2:'Guests won\'t book it because it\'s unique anymore. They\'ll book it because it delivers what hotels can\'t: immersion.', cta:null},
+      {h1:'2. SCALE WILL DETERMINE SURVIVAL', h2:'Operators under 15 units will struggle. Those at 20–30+ will thrive. The middle is the danger zone.', cta:null},
+      {h1:'3. WELLNESS WILL GO FROM AMENITY TO IDENTITY', h2:'Saunas, cold plunges, forest therapy. Properties that integrate wellness will outperform those that treat it as an add-on.', cta:null},
+      {h1:'4. AVERAGE DAILY RATES WILL RISE FOR DESIGN-LED UNITS', h2:'Thoughtful architecture and curated interiors will command premium pricing even in soft markets.', cta:null},
+      {h1:'5. RV PARKS WILL BECOME THE HOTTEST CONVERSION TARGETS', h2:'Existing infrastructure + glamping upgrades = the fastest, smartest path into the industry.', cta:null},
+      {h1:'6. BRAND TRUST WILL DETERMINE WINNERS', h2:'Properties with clear storytelling, consistent design, and recognizable hospitality philosophies will dominate direct bookings.', cta:null},
+      {h1:'7. SEASONALITY WILL MATTER LESS', h2:'Winter glamping, shoulder-season wellness retreats, and year-round experiences will become the new norm.', cta:null},
+      {h1:'8. SMALL OPERATORS WILL OUTPERFORM BIG ONES', h2:'Agility, authenticity, and community connection are advantages that corporations can\'t replicate.', cta:null},
+      {h1:'9. LAND STEWARDSHIP WILL BECOME A BOOKING DRIVER', h2:'Sustainable building and regenerative landscapes will shift from "nice to have" to "why we chose this place."', cta:null},
+      {h1:'10. THE FRANCHISE MODEL WILL RESHAPE THE INDUSTRY', h2:'Independent operators will increasingly lean on proven systems, brands, and networks. Building alone is the hard path.', cta:null},
+      {h1:'AND THE BIGGEST PREDICTION — PEOPLE WILL CRAVE NATURE MORE THAN EVER', h2:'Properties that help them reconnect — simply, beautifully, intentionally — will lead the next wave.', cta:'FOLLOW TO SEE IF WE GET THESE RIGHT →'}
+    ]
+  },
+  origin: {
+    name: 'Origin Story',
+    icon: '🌱',
+    desc: 'Founding myth + vulnerability',
+    slides: [
+      {h1:'IN [YEAR], WE BOUGHT AN OLD [PROPERTY TYPE]', h2:'[ACQUISITION DETAIL]. [FINANCIAL CONTEXT]. It felt like the right call. It also felt terrifying.', cta:null},
+      {h1:'THE PRICE — $[AMOUNT]. WE COULD ONLY AFFORD IT BY [HOW]', h2:'[FINANCIAL VULNERABILITY]. People said we were crazy. They weren\'t wrong to be skeptical.', cta:null},
+      {h1:'IT WAS IN ROUGH SHAPE, TO SAY THE LEAST', h2:'[DESCRIBE THE STATE OF THE PROPERTY]. Tons of work. Tons of potential. We chose to see the latter.', cta:null},
+      {h1:'PEOPLE CALLED US CRAZY', h2:'"You\'re going to lose everything." "The timing is wrong." "The market isn\'t ready." We heard it all.', cta:null},
+      {h1:'WE GOT TO WORK ANYWAY', h2:'[DESCRIBE THE EARLY WORK]. Cold mornings. Long days. Nothing glamorous about the glamping build.', cta:null},
+      {h1:'[X] MONTHS AND $[AMOUNT] LATER, WE OPENED', h2:'Nothing was perfect. Wrong flooring, missing pieces, half-finished bathhouse. But people loved it.', cta:null},
+      {h1:'FIRST SEASON — [OCCUPANCY]% OCCUPANCY', h2:'We bootstrapped bookings through Instagram and word of mouth. Direct. No OTAs. No ad spend.', cta:null},
+      {h1:'IT\'S OUR BEST SEASON YET', h2:'Highest occupancy. Highest ADR. First year-round season. The model is working.', cta:null},
+      {h1:'FROM ONE PROPERTY TO [N] LOCATIONS', h2:'[DESCRIBE GROWTH]. What started as a side project has become a brand, a system, and a movement.', cta:null},
+      {h1:'THIS IS THE FERNCREST PROMISE', h2:'We share everything. The wins. The losses. The numbers. Because we learn faster together.', cta:null},
+      {h1:'WE\'RE JUST GETTING STARTED', h2:'[N] properties. [N] franchise partners. [N] units. And a mission to build the best outdoor hospitality brand in the country.', cta:null},
+      {h1:'FOLLOW ALONG AS WE BUILD WHAT\'S NEXT', h2:'The journey is the content. Every property walk, every build, every mistake — you\'ll see it all here.', cta:'FOLLOW TO SEE WHAT\'S NEXT →'}
+    ]
+  }
+};
+
+const PATTERNS = [
+  {id:'B', name:'Money Story', desc:'$ amounts + open loop'},
+  {id:'A', name:'Authority', desc:'Predictions + insights'},
+  {id:'C', name:'Character', desc:'Named person + journey'},
+  {id:'D', name:'Origin Story', desc:'Founding myth'},
+  {id:'E', name:'Dialogue/POV', desc:'Real quotes + moments'},
+  {id:'F', name:'Cinematic', desc:'One detail per slide'}
+];
+
+const PAT_INSTRS = {
+  B:'Money Story: Hook with specific dollar amount + open loop question. Each slide = one financial revelation. Build tension around unit economics. End with stakes-based CTA.',
+  A:'Authority: Bold numbered predictions ALL CAPS. Each slide = one contrarian industry insight. Contrast language: X shifts from OLD to NEW.',
+  C:'Character Story: Name a real person in hook. Each slide = one chapter. Expectation then subversion. Final CTA = audience content vote.',
+  D:'Origin Story: Simple acquisition hook. Reveal financial vulnerability slide 2. Arc: doubt, hard work, imperfect launch, validation. Philosophical closer.',
+  E:'Dialogue POV: Open with POV and a real quoted moment. Each slide = one real observation as quoted thought. Intimate journal-like feel.',
+  F:'Cinematic: One tiny specific real moment per slide. Documentary pace. No lists. Just one detail per slide.'
+};
+
+// ─── INIT ─────────────────────────────────────────────────────
+function init() {
+  // Template grid
+  const tg = document.getElementById('template-grid');
+  Object.entries(TEMPLATES).forEach(([key, t]) => {
+    const card = document.createElement('div');
+    card.className = 'template-card';
+    card.innerHTML = `<div class="tc-icon">${t.icon}</div><div class="tc-name">${t.name}</div><div class="tc-desc">${t.desc}</div>`;
+    card.onclick = () => selectTemplate(key, card);
+    tg.appendChild(card);
+  });
+
+  // Pattern grid
+  const pg = document.getElementById('pattern-grid');
+  PATTERNS.forEach(p => {
+    const btn = document.createElement('div');
+    btn.className = 'pat-btn' + (p.id === selectedPattern ? ' selected' : '');
+    btn.innerHTML = `<div class="pat-name">${p.name}</div><div class="pat-desc">${p.desc}</div>`;
+    btn.onclick = () => {
+      document.querySelectorAll('.pat-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedPattern = p.id;
+    };
+    pg.appendChild(btn);
+  });
+}
+
+function switchMode(mode) {
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('panel-' + mode).classList.add('active');
+  hideOutput();
+}
+
+function selectTemplate(key, card) {
+  document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  selectedTemplate = key;
+  buildSlideEditor(TEMPLATES[key].slides);
+  document.getElementById('template-slides-editor').classList.remove('hidden');
+}
+
+function buildSlideEditor(slides) {
+  const ed = document.getElementById('slides-editor');
+  ed.innerHTML = '';
+  slides.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'margin-bottom:16px;padding:14px 16px;border:1px solid var(--border);border-radius:8px;background:var(--cream);';
+    row.innerHTML = `
+      <div style="font-size:11px;font-weight:500;color:var(--gray);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;">Slide ${i+1}</div>
+      <div style="margin-bottom:8px;">
+        <div style="font-size:10px;color:var(--gray);margin-bottom:4px;">H1 — Black box</div>
+        <textarea rows="2" style="font-size:12px;" id="s${i}_h1">${s.h1}</textarea>
+      </div>
+      <div style="margin-bottom:${s.cta?'8px':'0'};">
+        <div style="font-size:10px;color:var(--gray);margin-bottom:4px;">H2 — Green box</div>
+        <textarea rows="3" style="font-size:12px;" id="s${i}_h2">${s.h2}</textarea>
+      </div>
+      ${s.cta ? `<div>
+        <div style="font-size:10px;color:var(--gray);margin-bottom:4px;">CTA — White box</div>
+        <input type="text" style="font-size:12px;" id="s${i}_cta" value="${s.cta}">
+      </div>` : ''}
+    `;
+    ed.appendChild(row);
+  });
+}
+
+function getSlidesFromEditor() {
+  const tmpl = TEMPLATES[selectedTemplate];
+  return tmpl.slides.map((s, i) => ({
+    num: i + 1,
+    h1: document.getElementById(`s${i}_h1`).value.trim(),
+    h2: document.getElementById(`s${i}_h2`).value.trim(),
+    cta: s.cta ? document.getElementById(`s${i}_cta`).value.trim() : null
+  }));
+}
+
+// ─── PHOTOS ───────────────────────────────────────────────────
+function loadPhotos(e, mode) {
+  const files = Array.from(e.target.files); if (!files.length) return;
+  let loaded = 0; const tmp = [];
+  const arr = mode === 't' ? tPhotos : aiPhotos;
+  files.forEach((f, i) => {
+    const r = new FileReader();
+    r.onload = ev => {
+      const img = new Image();
+      img.onload = () => { tmp[i] = img; loaded++; if (loaded === files.length) { if (mode==='t') tPhotos=tmp.filter(Boolean); else aiPhotos=tmp.filter(Boolean); renderPhotoGrid(mode); updatePhotoNote(mode); }};
+      img.src = ev.target.result;
+    };
+    r.readAsDataURL(f);
+  });
+}
+
+function renderPhotoGrid(mode) {
+  const arr = mode === 't' ? tPhotos : aiPhotos;
+  const grid = document.getElementById(mode + '-pgrid');
+  grid.innerHTML = '';
+  arr.forEach((img, i) => {
+    const w = document.createElement('div'); w.className = 'photo-thumb';
+    const im = document.createElement('img'); im.src = img.src;
+    const n = document.createElement('div'); n.className = 'pt-num'; n.textContent = 'S'+(i+1);
+    const d = document.createElement('button'); d.className = 'pt-del'; d.textContent = '×';
+    d.onclick = () => { if (mode==='t') tPhotos.splice(i,1); else aiPhotos.splice(i,1); renderPhotoGrid(mode); updatePhotoNote(mode); };
+    w.appendChild(im); w.appendChild(n); w.appendChild(d); grid.appendChild(w);
+  });
+}
+
+function updatePhotoNote(mode) {
+  const arr = mode === 't' ? tPhotos : aiPhotos;
+  const ok = document.getElementById(mode + '-photo-ok');
+  if (!arr.length) { ok.classList.add('hidden'); return; }
+  ok.classList.remove('hidden');
+  ok.textContent = arr.length + ' photo' + (arr.length > 1 ? 's' : '') + ' loaded';
+}
+
+// ─── RENDER ───────────────────────────────────────────────────
+async function renderFromTemplate() {
+  if (!selectedTemplate) { alert('Please select a template first.'); return; }
+  const slides = getSlidesFromEditor();
+  await renderSlides(slides, tPhotos);
+}
+
+async function generateFromTranscript() {
+  const apiKey = document.getElementById('api-key').value.trim();
+  const transcript = document.getElementById('transcript').value.trim();
+  if (!apiKey) { showError('Please enter your Anthropic API key above.'); return; }
+  if (!transcript) { showError('Please paste your transcript first.'); return; }
+
+  document.getElementById('ai-gen-btn').disabled = true;
+  hideOutput();
+  showProgress(5, 'Sending to Claude...');
+
+  const stats = document.getElementById('stats').value.trim();
+  const voice = document.getElementById('voice').value.trim();
+  const patInstr = PAT_INSTRS[selectedPattern];
+
+  const sysPrompt = `You are a social media content strategist for Ferncrest, an outdoor hospitality glamping brand. You create carousel content in the style of @findingpromisedland.
+
+Visual system: H1 = ALL CAPS bold Karrik, solid black box, white text. H2 = bold Karrik, solid green box (#2d5a2d), white text. CTA = smaller, white box, black text (last slide only).
+
+Pattern: ${patInstr}
+
+RULES:
+- Never put a stat in a separate field if it's already in the h1 or h2 text
+- ALL h1 text must be ALL CAPS
+- h2 text is sentence case with operator insight
+- cta is null for all slides except the last
+
+Return ONLY raw JSON starting with { — no markdown, no backticks, no explanation:
+{"structure":"one sentence","slides":[{"num":1,"h1":"ALL CAPS HEADLINE","h2":"Supporting operator insight sentence.","cta":null}]}`;
+
+  const userMsg = `Transcript:\n${transcript}${stats?'\n\nStats:\n'+stats:''}${voice?'\n\nVoice:\n'+voice:''}`;
+
+  try {
+    showProgress(20, 'Claude is analyzing your content...');
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system: sysPrompt, messages: [{ role: 'user', content: userMsg }] })
+    });
+    showProgress(60, 'Parsing response...');
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+    const raw = data.content.filter(b => b.type==='text').map(b => b.text).join('');
+    const start = raw.indexOf('{'), end = raw.lastIndexOf('}')+1;
+    if (start === -1) throw new Error('No JSON in response');
+    const parsed = JSON.parse(raw.substring(start, end));
+    if (!parsed.slides?.length) throw new Error('No slides in response');
+    showProgress(80, 'Rendering slides...');
+    hideError();
+    await renderSlides(parsed.slides, aiPhotos, parsed.structure);
+  } catch(err) {
+    showProgress(0, '');
+    hideProgressWrap();
+    showError('Error: ' + err.message);
+  }
+  document.getElementById('ai-gen-btn').disabled = false;
+}
+
+async function renderSlides(slides, photos, structure) {
+  try { await document.fonts.load('bold 78px Karrik'); } catch(e) {}
+  try { await document.fonts.load('47px Karrik'); } catch(e) {}
+
+  currentSlides = slides;
+  currentCanvases = [];
+  const grid = document.getElementById('slides-grid');
+  grid.innerHTML = '';
+
+  for (let i = 0; i < slides.length; i++) {
+    showProgress(Math.round(80 + (i/slides.length)*18), 'Rendering slide '+(i+1)+' of '+slides.length+'...');
+    const s = slides[i];
+    const tile = document.createElement('div'); tile.className = 'slide-tile';
+    const prev = document.createElement('div'); prev.className = 'slide-preview';
+    const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    prev.appendChild(cv);
+    const foot = document.createElement('div'); foot.className = 'slide-footer';
+    foot.innerHTML = `<span class="slide-num">${String(s.num||i+1).padStart(2,'0')}/12</span><button class="btn-dl-single" onclick="dlOne(${i})">PNG ↓</button>`;
+    tile.appendChild(prev); tile.appendChild(foot);
+    grid.appendChild(tile);
+    drawSlide(cv, s, photos[i]||null, i);
+    currentCanvases.push(cv);
+    await new Promise(r => setTimeout(r, 15));
+  }
+
+  showProgress(100, 'Done!');
+  setTimeout(() => {
+    hideProgressWrap();
+    document.getElementById('output-section').classList.remove('hidden');
+    if (structure) document.getElementById('output-meta').textContent = structure;
+  }, 300);
+}
+
+// ─── CANVAS DRAWING ──────────────────────────────────────────
+function wrapText(ctx, text, maxW) {
+  const words = text.split(' '), lines = []; let line = '';
+  for (const w of words) {
+    const t = line + w + ' ';
+    if (ctx.measureText(t).width > maxW && line) { lines.push(line.trim()); line = w + ' '; }
+    else line = t;
+  }
+  if (line.trim()) lines.push(line.trim());
+  return lines;
+}
+
+function drawHugBox(ctx, x, y, lines, lineH, px, py, bg, fg, font) {
+  ctx.font = font;
+  const textW = Math.max(...lines.map(l => ctx.measureText(l).width));
+  const boxW = Math.min(textW + px*2, W - x*2);
+  const boxH = lines.length * lineH + py*2;
+  ctx.fillStyle = bg; ctx.fillRect(x, y, boxW, boxH);
+  ctx.fillStyle = fg; ctx.textBaseline = 'top';
+  lines.forEach((l, i) => ctx.fillText(l, x+px, y+py+i*lineH));
+  return boxH;
+}
+
+function drawSlide(cv, s, bg, idx) {
+  const ctx = cv.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+
+  if (bg) {
+    const ir = bg.width/bg.height, cr = W/H;
+    let sx, sy, sw, sh;
+    if (ir > cr) { sh = bg.height; sw = sh*cr; sx = (bg.width-sw)/2; sy = 0; }
+    else { sw = bg.width; sh = sw/cr; sx = 0; sy = (bg.height-sh)/2; }
+    ctx.drawImage(bg, sx, sy, sw, sh, 0, 0, W, H);
+    ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.fillRect(0, 0, W, H);
+  } else {
+    const [c1,c2] = BG_GRAD[idx % BG_GRAD.length];
+    const g = ctx.createLinearGradient(0, 0, W*0.4, H);
+    g.addColorStop(0, c1); g.addColorStop(1, c2);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  }
+
+  const h1fs = Math.round(W*0.068);
+  const h1font = `bold ${h1fs}px 'Karrik',Impact,sans-serif`;
+  const h2fs = Math.round(W*0.043);
+  const h2font = `bold ${h2fs}px 'Karrik',Impact,sans-serif`;
+  const ctafs = Math.round(W*0.032);
+  const ctafont = `bold ${ctafs}px 'Karrik',sans-serif`;
+
+  ctx.font = h1font;
+  const h1lines = wrapText(ctx, (s.h1||'').toUpperCase(), MAX_W - PX*2);
+  const h1lh = h1fs * 1.22;
+  const h1bh = h1lines.length * h1lh + PY*2;
+
+  ctx.font = h2font;
+  const h2lines = wrapText(ctx, s.h2||'', MAX_W - PX*2);
+  const h2lh = h2fs * 1.32;
+  const h2bh = h2lines.length * h2lh + PY*2;
+
+  let ctaLines = [];
+  if (s.cta) { ctx.font = ctafont; ctaLines = wrapText(ctx, s.cta, MAX_W - PX*2); }
+  const ctabh = s.cta ? ctaLines.length * ctafs * 1.3 + PY*1.5 : 0;
+
+  const total = h1bh + GAP + h2bh + (s.cta ? GAP + ctabh : 0);
+  const startY = Math.min(Math.round(H*0.42), H - total - 60);
+
+  let y = startY;
+  drawHugBox(ctx, LEFT, y, h1lines, h1lh, PX, PY, '#000000', '#ffffff', h1font); y += h1bh + GAP;
+  drawHugBox(ctx, LEFT, y, h2lines, h2lh, PX, PY, GREEN, '#ffffff', h2font); y += h2bh;
+  if (s.cta) { y += GAP; drawHugBox(ctx, LEFT, y, ctaLines, ctafs*1.3, PX, PY*0.75, '#ffffff', '#000000', ctafont); }
+}
+
+// ─── DOWNLOAD ─────────────────────────────────────────────────
+function dlOne(i) {
+  const a = document.createElement('a');
+  a.download = `ferncrest-slide-${String(i+1).padStart(2,'0')}.png`;
+  a.href = currentCanvases[i].toDataURL('image/png'); a.click();
+}
+
+function dlAll(mode) {
+  currentCanvases.forEach((cv, i) => setTimeout(() => {
+    const a = document.createElement('a');
+    a.download = `ferncrest-slide-${String(i+1).padStart(2,'0')}.png`;
+    a.href = cv.toDataURL('image/png'); a.click();
+  }, i * 150));
+}
+
+// ─── UI HELPERS ──────────────────────────────────────────────
+function showProgress(pct, lbl) {
+  document.getElementById('prog-wrap').classList.remove('hidden');
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = lbl;
+}
+function hideProgressWrap() { document.getElementById('prog-wrap').classList.add('hidden'); }
+function hideOutput() { document.getElementById('output-section').classList.add('hidden'); }
+function showError(msg) { const e = document.getElementById('ai-error'); e.textContent = msg; e.classList.remove('hidden'); }
+function hideError() { document.getElementById('ai-error').classList.add('hidden'); }
+
+// ─── START ────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
